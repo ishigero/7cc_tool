@@ -1,34 +1,26 @@
 <?php
-class Check extends CI_Controller {
+class Check {
 
-  const SOURCE_DIR = path to target souce directory;
-  const CHECKER = path to php7cc.php; //ex vendor/sstalle/php7cc/bin/php7cc.php
+  const SOURCE_DIR = '/home/vagrant/work/source'; //target directory
+  const CHECKER = '/home/vagrant/vendor/sstalle/php7cc/bin/php7cc.php'; //path to php7cc.php
   const OUTPUT_FILE_SUFFIX = '_errors.txt';
   const FLG = 'Checked';
 
 
-  public function index() {
-      //ファイル取得開始
-      $list = $this->_getFileList(self::SOURCE_DIR);
-      
-      //チェック開始
+  public static function run() {
+      $list = self::_getFileList(self::SOURCE_DIR);
       foreach($list as $file) {
-          log_message('info', '■checked:'.$file);
-          $this->_outputErrorFile($file);
-          if($this->_isError($file.self::OUTPUT_FILE_SUFFIX)) { // error
-              
+          echo 'checked : '. $file.PHP_EOL;
+          self::_outputErrorFile($file);
+          if(self::_isError($file.self::OUTPUT_FILE_SUFFIX)) { // error
           } else { // not error
               $result = unlink($file.self::OUTPUT_FILE_SUFFIX);
-              $bool = 'FAILED';
-              if($result === TRUE) $bool = 'SUCCESS';
-              log_message('info', '■delete_is:'.$bool);
           }          
       }
-      //チェック開始
   }
 
 
-  private function _isError($file) {
+  private function _isError($file): bool {
       $ret = FALSE;
       $input = file($file);
       if(strstr($input[0], self::FLG) === FALSE)
@@ -50,15 +42,15 @@ class Check extends CI_Controller {
   } 
 
 
-  private function _getFileList($dir) {
+  private function _getFileList($dir): array{
     $files = glob(rtrim($dir, '/') . '/*');
-    $list = array();
+    $list = [];
     foreach ($files as $file) {
         if (is_file($file) && strstr($file, '.php') != FALSE) {
             $list[] = $file;
         }
         if (is_dir($file)) {
-            $list = array_merge($list, $this->_getFileList($file));
+            $list = array_merge($list, self::_getFileList($file));
         }
     }
     return $list;

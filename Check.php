@@ -2,7 +2,7 @@
 class Check {
 
   const SOURCE_DIR = '/home/vagrant/work/source'; //target directory
-  const CHECKER = '/home/vagrant/vendor/sstalle/php7cc/bin/php7cc.php'; //path to php7cc.php
+  const CHECKER = '/home/vagrant/vendor/sstalle/php7cc/bin/php7cc.php';  //path to php7cc.php
   const OUTPUT_FILE_SUFFIX = '_errors.txt';
   const FLG = 'Checked';
 
@@ -20,7 +20,7 @@ class Check {
   }
 
 
-  private function _isError($file): bool {
+  private function _isError(String $file): bool {
       $ret = FALSE;
       $input = file($file);
       if(strstr($input[0], self::FLG) === FALSE)
@@ -29,20 +29,20 @@ class Check {
   }
 
 
-  private function _doCheck($filePath) {
+  private function _doCheck(String $filePath) {
       $cmd = 'php '.self::CHECKER.' '.$filePath;
       return shell_exec($cmd);
   }
 
 
-  private function _outputErrorFile($filePath) {
+  private function _outputErrorFile(String $filePath) {
       $cmd = 'php '.self::CHECKER.' '.$filePath.' > '.$filePath.self::OUTPUT_FILE_SUFFIX;
       shell_exec($cmd);
       return;
   } 
 
 
-  private function _getFileList($dir): array{
+  private function _getFileList(String $dir): array{
     $files = glob(rtrim($dir, '/') . '/*');
     $list = [];
     foreach ($files as $file) {
